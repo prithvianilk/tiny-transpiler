@@ -1,0 +1,9 @@
+PRINT "1"
+
+A = 1
+B = 2
+C = 1 + 2
+PRINT C
+
+D = "keke"
+PRINT D
