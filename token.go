@@ -6,6 +6,7 @@ type Token struct {
 }
 
 const (
+	NEW_LINE_TOKEN_TYPE   string = "NEW_LINE_TOKEN_TYPE"
 	KEYWORD_TOKEN_TYPE    string = "KEYWORD_TOKEN_TYPE"
 	OPERATOR_TOKEN_TYPE   string = "OPERATOR_TOKEN_TYPE"
 	NUMBER_TOKEN_TYPE     string = "NUMBER_TOKEN_TYPE"

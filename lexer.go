@@ -36,7 +36,7 @@ func (lexer *Lexer) getEndIndex(continueCondition func(rune) bool) int {
 	return endIndex
 }
 
-func (lexer *Lexer) getFullToken() {
+func (lexer *Lexer) getFullToken() Token {
 	var token Token
 	var endIndex int
 	startingToken := rune(lexer.text[lexer.currentIndex])
@@ -55,41 +55,43 @@ func (lexer *Lexer) getFullToken() {
 			token.Type = IDENTIFIER_TOKEN_TYPE
 		}
 	}
-	lexer.tokens = append(lexer.tokens, token)
 	lexer.currentIndex = endIndex
+	return token
 }
 
-func (lexer *Lexer) getFullStringToken() {
+func (lexer *Lexer) getFullStringToken() Token {
 	endIndex := lexer.getEndIndex(func(r rune) bool {
 		return r != DOUBLE_QUOTE_CHARACTER
 	})
 	value := lexer.text[lexer.currentIndex : endIndex+2]
 	token := CreateToken(value, STRING_TOKEN_TYPE)
-	lexer.tokens = append(lexer.tokens, token)
-	lexer.currentIndex = endIndex + 2
+	lexer.currentIndex = endIndex + 1
+	return token
 }
 
 func (lexer *Lexer) Tokenize() {
 	for lexer.currentIndex < len(lexer.text) {
+		var token Token
 		char := rune(lexer.text[lexer.currentIndex])
-		isSkippable := char == NEW_LINE_CHARACTER || char == WHITESPACE_CHARACTER
+		isSkippable := char == WHITESPACE_CHARACTER
 		if !isSkippable {
-			if char == EQUAL_SIGN {
-				token := CreateToken(string(char), ASSIGNMENT_TOKEN_TYPE)
-				lexer.tokens = append(lexer.tokens, token)
+			value := string(char)
+			if char == NEW_LINE_CHARACTER {
+				token = CreateToken(value, NEW_LINE_TOKEN_TYPE)
+			} else if char == EQUAL_SIGN {
+				token = CreateToken(value, ASSIGNMENT_TOKEN_TYPE)
 			} else if char == PLUS_SIGN {
-				token := CreateToken(string(char), OPERATOR_TOKEN_TYPE)
-				lexer.tokens = append(lexer.tokens, token)
+				token = CreateToken(value, OPERATOR_TOKEN_TYPE)
 			} else if char == MINUS_SIGN {
-				token := CreateToken(string(char), OPERATOR_TOKEN_TYPE)
-				lexer.tokens = append(lexer.tokens, token)
+				token = CreateToken(value, OPERATOR_TOKEN_TYPE)
 			} else if char == DOUBLE_QUOTE_CHARACTER {
-				lexer.getFullStringToken()
+				token = lexer.getFullStringToken()
 			} else if isNumeric(char) {
-				lexer.getFullToken()
+				token = lexer.getFullToken()
 			} else if isAlphaNumeric(char) {
-				lexer.getFullToken()
+				token = lexer.getFullToken()
 			}
+			lexer.tokens = append(lexer.tokens, token)
 		}
 		lexer.currentIndex++
 	}

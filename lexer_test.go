@@ -10,19 +10,26 @@ func TestLexerBig(t *testing.T) {
 	expectedTokens := []Token{
 		{Value: "PRINT", Type: KEYWORD_TOKEN_TYPE},
 		{Value: "\"1\"", Type: STRING_TOKEN_TYPE},
+		{Value: string(NEW_LINE_CHARACTER), Type: NEW_LINE_TOKEN_TYPE},
+		{Value: string(NEW_LINE_CHARACTER), Type: NEW_LINE_TOKEN_TYPE},
 		{Value: "A", Type: IDENTIFIER_TOKEN_TYPE},
 		{Value: "=", Type: ASSIGNMENT_TOKEN_TYPE},
 		{Value: "1", Type: NUMBER_TOKEN_TYPE},
+		{Value: string(NEW_LINE_CHARACTER), Type: NEW_LINE_TOKEN_TYPE},
 		{Value: "B", Type: IDENTIFIER_TOKEN_TYPE},
 		{Value: "=", Type: ASSIGNMENT_TOKEN_TYPE},
 		{Value: "1", Type: NUMBER_TOKEN_TYPE},
 		{Value: "+", Type: OPERATOR_TOKEN_TYPE},
 		{Value: "2", Type: NUMBER_TOKEN_TYPE},
+		{Value: string(NEW_LINE_CHARACTER), Type: NEW_LINE_TOKEN_TYPE},
 		{Value: "PRINT", Type: KEYWORD_TOKEN_TYPE},
 		{Value: "B", Type: IDENTIFIER_TOKEN_TYPE},
+		{Value: string(NEW_LINE_CHARACTER), Type: NEW_LINE_TOKEN_TYPE},
+		{Value: string(NEW_LINE_CHARACTER), Type: NEW_LINE_TOKEN_TYPE},
 		{Value: "C", Type: IDENTIFIER_TOKEN_TYPE},
 		{Value: "=", Type: ASSIGNMENT_TOKEN_TYPE},
 		{Value: "\"keke\"", Type: STRING_TOKEN_TYPE},
+		{Value: string(NEW_LINE_CHARACTER), Type: NEW_LINE_TOKEN_TYPE},
 		{Value: "READ", Type: KEYWORD_TOKEN_TYPE},
 		{Value: "D", Type: IDENTIFIER_TOKEN_TYPE},
 	}
@@ -33,6 +40,7 @@ func TestLexerIO(t *testing.T) {
 	expectedTokens := []Token{
 		{Value: "READ", Type: KEYWORD_TOKEN_TYPE},
 		{Value: "VARIABLE", Type: IDENTIFIER_TOKEN_TYPE},
+		{Value: string(NEW_LINE_CHARACTER), Type: NEW_LINE_TOKEN_TYPE},
 		{Value: "PRINT", Type: KEYWORD_TOKEN_TYPE},
 		{Value: "VARIABLE", Type: IDENTIFIER_TOKEN_TYPE},
 	}
@@ -44,14 +52,17 @@ func TestLexerOperators(t *testing.T) {
 		{Value: "A", Type: IDENTIFIER_TOKEN_TYPE},
 		{Value: "=", Type: ASSIGNMENT_TOKEN_TYPE},
 		{Value: "1", Type: NUMBER_TOKEN_TYPE},
+		{Value: string(NEW_LINE_CHARACTER), Type: NEW_LINE_TOKEN_TYPE},
 		{Value: "B", Type: IDENTIFIER_TOKEN_TYPE},
 		{Value: "=", Type: ASSIGNMENT_TOKEN_TYPE},
 		{Value: "2", Type: NUMBER_TOKEN_TYPE},
+		{Value: string(NEW_LINE_CHARACTER), Type: NEW_LINE_TOKEN_TYPE},
 		{Value: "C", Type: IDENTIFIER_TOKEN_TYPE},
 		{Value: "=", Type: ASSIGNMENT_TOKEN_TYPE},
 		{Value: "B", Type: IDENTIFIER_TOKEN_TYPE},
 		{Value: "+", Type: OPERATOR_TOKEN_TYPE},
 		{Value: "A", Type: IDENTIFIER_TOKEN_TYPE},
+		{Value: string(NEW_LINE_CHARACTER), Type: NEW_LINE_TOKEN_TYPE},
 		{Value: "D", Type: IDENTIFIER_TOKEN_TYPE},
 		{Value: "=", Type: ASSIGNMENT_TOKEN_TYPE},
 		{Value: "B", Type: IDENTIFIER_TOKEN_TYPE},
@@ -64,7 +75,9 @@ func TestLexerOperators(t *testing.T) {
 func TestLexerString(t *testing.T) {
 	expectedTokens := []Token{
 		{Value: "\"1\"", Type: STRING_TOKEN_TYPE},
+		{Value: string(NEW_LINE_CHARACTER), Type: NEW_LINE_TOKEN_TYPE},
 		{Value: "\"two\"", Type: STRING_TOKEN_TYPE},
+		{Value: string(NEW_LINE_CHARACTER), Type: NEW_LINE_TOKEN_TYPE},
 		{Value: "\"san\"", Type: STRING_TOKEN_TYPE},
 	}
 	execTest("test_lexer_string.txt", expectedTokens, t)
