@@ -13,6 +13,8 @@ func main() {
 	}
 	text := string(content)
 	lexer := CreateLexer(text)
-	lexer.Lex()
-	fmt.Println(lexer.tokens)
+	lexer.Tokenize()
+	for n, r := range lexer.tokens {
+		fmt.Printf("token %d: %s\n", n+1, string(r))
+	}
 }

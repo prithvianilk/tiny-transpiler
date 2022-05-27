@@ -31,7 +31,7 @@ func CreateLexer(text string) Lexer {
 	return Lexer{text: text, currentIndex: 0, tokens: []string{}}
 }
 
-func (lexer *Lexer) getFullToken(continueCondition func(rune) bool) {
+func (lexer *Lexer) getEndIndex(continueCondition func(rune) bool) int {
 	endIndex := lexer.currentIndex
 	for next := lexer.currentIndex + 1; next < len(lexer.text); next++ {
 		nextChar := lexer.text[next]
@@ -40,12 +40,26 @@ func (lexer *Lexer) getFullToken(continueCondition func(rune) bool) {
 		}
 		endIndex = next
 	}
+	return endIndex
+}
+
+func (lexer *Lexer) getFullToken(continueCondition func(rune) bool) {
+	endIndex := lexer.getEndIndex(continueCondition)
 	identifier := lexer.text[lexer.currentIndex : endIndex+1]
 	lexer.tokens = append(lexer.tokens, identifier)
 	lexer.currentIndex = endIndex
 }
 
-func (lexer *Lexer) Lex() {
+func (lexer *Lexer) getFullStringToken() {
+	endIndex := lexer.getEndIndex(func(r rune) bool {
+		return r != DOUBLE_QUOTE_CHARACTER
+	})
+	identifier := lexer.text[lexer.currentIndex : endIndex+2]
+	lexer.tokens = append(lexer.tokens, identifier)
+	lexer.currentIndex = endIndex + 2
+}
+
+func (lexer *Lexer) Tokenize() {
 	for lexer.currentIndex < len(lexer.text) {
 		char := rune(lexer.text[lexer.currentIndex])
 		isSkippable := char == NEW_LINE_CHARACTER || char == WHITESPACE_CHARACTER
@@ -57,7 +71,7 @@ func (lexer *Lexer) Lex() {
 			} else if char == MINUS_SIGN {
 				lexer.tokens = append(lexer.tokens, MINUS_TOKEN)
 			} else if char == DOUBLE_QUOTE_CHARACTER {
-				lexer.tokens = append(lexer.tokens, DOUBLE_QUOTE_TOKEN)
+				lexer.getFullStringToken()
 			} else if isNumeric(char) {
 				lexer.getFullToken(isNumeric)
 			} else if isAlphaNumeric(char) {

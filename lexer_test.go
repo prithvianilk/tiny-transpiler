@@ -7,13 +7,43 @@ import (
 )
 
 func TestLexerBig(t *testing.T) {
-	expectedTokens := []string{"PRINT", "DOUBLE_QUOTE", "1", "DOUBLE_QUOTE", "A", "EQUAL", "1", "B", "EQUAL", "2", "C", "EQUAL", "1", "PLUS", "2", "PRINT", "C", "D", "EQUAL", "DOUBLE_QUOTE", "keke", "DOUBLE_QUOTE", "PRINT", "D"}
+	expectedTokens := []string{
+		"PRINT",
+		"\"1\"",
+		"A",
+		"EQUAL",
+		"1",
+		"B",
+		"EQUAL",
+		"2",
+		"C",
+		"EQUAL",
+		"1",
+		"PLUS",
+		"2",
+		"PRINT",
+		"C",
+		"D",
+		"EQUAL",
+		"\"keke\"",
+		"PRINT",
+		"D",
+	}
 	execTest("test_lexer_big.txt", expectedTokens, t)
 }
 
 func TestLexerIO(t *testing.T) {
 	expectedTokens := []string{"READ", "VARIABLE", "PRINT", "VARIABLE"}
 	execTest("test_lexer_io.txt", expectedTokens, t)
+}
+
+func TestLexerString(t *testing.T) {
+	expectedTokens := []string{
+		"\"1\"",
+		"\"two\"",
+		"\"san\"",
+	}
+	execTest("test_lexer_string.txt", expectedTokens, t)
 }
 
 func execTest(codeFilename string, expectedTokens []string, t *testing.T) {
@@ -23,7 +53,7 @@ func execTest(codeFilename string, expectedTokens []string, t *testing.T) {
 	}
 	code := string(content)
 	lexer := CreateLexer(code)
-	lexer.Lex()
+	lexer.Tokenize()
 	tokens := lexer.tokens
 	numberOfTokens := len(tokens)
 	numberOfExpectedTokens := len(expectedTokens)
