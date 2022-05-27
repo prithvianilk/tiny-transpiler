@@ -7,46 +7,70 @@ import (
 )
 
 func TestLexerBig(t *testing.T) {
-	expectedTokens := []string{
-		"PRINT",
-		"\"1\"",
-		"A",
-		"EQUAL",
-		"1",
-		"B",
-		"EQUAL",
-		"2",
-		"C",
-		"EQUAL",
-		"1",
-		"PLUS",
-		"2",
-		"PRINT",
-		"C",
-		"D",
-		"EQUAL",
-		"\"keke\"",
-		"PRINT",
-		"D",
+	expectedTokens := []Token{
+		{Value: "PRINT", Type: KEYWORD_TOKEN_TYPE},
+		{Value: "\"1\"", Type: STRING_TOKEN_TYPE},
+		{Value: "A", Type: IDENTIFIER_TOKEN_TYPE},
+		{Value: "=", Type: ASSIGNMENT_TOKEN_TYPE},
+		{Value: "1", Type: NUMBER_TOKEN_TYPE},
+		{Value: "B", Type: IDENTIFIER_TOKEN_TYPE},
+		{Value: "=", Type: ASSIGNMENT_TOKEN_TYPE},
+		{Value: "1", Type: NUMBER_TOKEN_TYPE},
+		{Value: "+", Type: OPERATOR_TOKEN_TYPE},
+		{Value: "2", Type: NUMBER_TOKEN_TYPE},
+		{Value: "PRINT", Type: KEYWORD_TOKEN_TYPE},
+		{Value: "B", Type: IDENTIFIER_TOKEN_TYPE},
+		{Value: "C", Type: IDENTIFIER_TOKEN_TYPE},
+		{Value: "=", Type: ASSIGNMENT_TOKEN_TYPE},
+		{Value: "\"keke\"", Type: STRING_TOKEN_TYPE},
+		{Value: "READ", Type: KEYWORD_TOKEN_TYPE},
+		{Value: "D", Type: IDENTIFIER_TOKEN_TYPE},
 	}
 	execTest("test_lexer_big.txt", expectedTokens, t)
 }
 
 func TestLexerIO(t *testing.T) {
-	expectedTokens := []string{"READ", "VARIABLE", "PRINT", "VARIABLE"}
+	expectedTokens := []Token{
+		{Value: "READ", Type: KEYWORD_TOKEN_TYPE},
+		{Value: "VARIABLE", Type: IDENTIFIER_TOKEN_TYPE},
+		{Value: "PRINT", Type: KEYWORD_TOKEN_TYPE},
+		{Value: "VARIABLE", Type: IDENTIFIER_TOKEN_TYPE},
+	}
 	execTest("test_lexer_io.txt", expectedTokens, t)
 }
 
+func TestLexerOperators(t *testing.T) {
+	expectedTokens := []Token{
+		{Value: "A", Type: IDENTIFIER_TOKEN_TYPE},
+		{Value: "=", Type: ASSIGNMENT_TOKEN_TYPE},
+		{Value: "1", Type: NUMBER_TOKEN_TYPE},
+		{Value: "B", Type: IDENTIFIER_TOKEN_TYPE},
+		{Value: "=", Type: ASSIGNMENT_TOKEN_TYPE},
+		{Value: "2", Type: NUMBER_TOKEN_TYPE},
+		{Value: "C", Type: IDENTIFIER_TOKEN_TYPE},
+		{Value: "=", Type: ASSIGNMENT_TOKEN_TYPE},
+		{Value: "B", Type: IDENTIFIER_TOKEN_TYPE},
+		{Value: "+", Type: OPERATOR_TOKEN_TYPE},
+		{Value: "A", Type: IDENTIFIER_TOKEN_TYPE},
+		{Value: "D", Type: IDENTIFIER_TOKEN_TYPE},
+		{Value: "=", Type: ASSIGNMENT_TOKEN_TYPE},
+		{Value: "B", Type: IDENTIFIER_TOKEN_TYPE},
+		{Value: "-", Type: OPERATOR_TOKEN_TYPE},
+		{Value: "A", Type: IDENTIFIER_TOKEN_TYPE},
+	}
+	execTest("test_lexer_operator.txt", expectedTokens, t)
+}
+
 func TestLexerString(t *testing.T) {
-	expectedTokens := []string{
-		"\"1\"",
-		"\"two\"",
-		"\"san\"",
+	expectedTokens := []Token{
+		{Value: "\"1\"", Type: STRING_TOKEN_TYPE},
+		{Value: "\"two\"", Type: STRING_TOKEN_TYPE},
+		{Value: "\"san\"", Type: STRING_TOKEN_TYPE},
 	}
 	execTest("test_lexer_string.txt", expectedTokens, t)
 }
 
-func execTest(codeFilename string, expectedTokens []string, t *testing.T) {
+func execTest(codeFilename string, expectedTokens []Token, t *testing.T) {
 	content, err := os.ReadFile(codeFilename)
 	if err != nil {
 		t.Fatal(err.Error())
@@ -63,7 +87,7 @@ func execTest(codeFilename string, expectedTokens []string, t *testing.T) {
 	}
 	for index, token := range tokens {
 		expectedToken := expectedTokens[index]
-		if expectedToken != token {
+		if expectedToken.Value != token.Value || expectedToken.Type != token.Type {
 			message := fmt.Sprintf("expected token number %d as %s, got %s", index+1, expectedToken, token)
 			t.Fatal(message)
 		}

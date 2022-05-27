@@ -1,9 +1,8 @@
 PRINT "1"
 
 A = 1
-B = 2
-C = 1 + 2
-PRINT C
+B = 1 + 2
+PRINT B
 
-D = "keke"
-PRINT D
+C = "keke"
+READ D

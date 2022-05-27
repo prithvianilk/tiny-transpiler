@@ -9,13 +9,6 @@ const (
 	DOUBLE_QUOTE_CHARACTER rune = '"'
 )
 
-const (
-	EQUAL_TOKEN        string = "EQUAL"
-	PLUS_TOKEN         string = "PLUS"
-	MINUS_TOKEN        string = "MINUS"
-	DOUBLE_QUOTE_TOKEN string = "DOUBLE_QUOTE"
-)
-
 var keywords = map[string]bool{
 	"PRINT": true,
 	"READ":  true,
@@ -23,12 +16,12 @@ var keywords = map[string]bool{
 
 type Lexer struct {
 	text         string
-	tokens       []string
+	tokens       []Token
 	currentIndex int
 }
 
 func CreateLexer(text string) Lexer {
-	return Lexer{text: text, currentIndex: 0, tokens: []string{}}
+	return Lexer{text: text, currentIndex: 0, tokens: []Token{}}
 }
 
 func (lexer *Lexer) getEndIndex(continueCondition func(rune) bool) int {
@@ -43,10 +36,26 @@ func (lexer *Lexer) getEndIndex(continueCondition func(rune) bool) int {
 	return endIndex
 }
 
-func (lexer *Lexer) getFullToken(continueCondition func(rune) bool) {
-	endIndex := lexer.getEndIndex(continueCondition)
-	identifier := lexer.text[lexer.currentIndex : endIndex+1]
-	lexer.tokens = append(lexer.tokens, identifier)
+func (lexer *Lexer) getFullToken() {
+	var token Token
+	var endIndex int
+	startingToken := rune(lexer.text[lexer.currentIndex])
+	isNumericToken := isNumeric(startingToken)
+	if isNumericToken {
+		endIndex = lexer.getEndIndex(isNumeric)
+		token.Value = lexer.text[lexer.currentIndex : endIndex+1]
+		token.Type = NUMBER_TOKEN_TYPE
+	} else {
+		endIndex = lexer.getEndIndex(isAlphaNumeric)
+		token.Value = lexer.text[lexer.currentIndex : endIndex+1]
+		_, isKeyword := keywords[token.Value]
+		if isKeyword {
+			token.Type = KEYWORD_TOKEN_TYPE
+		} else {
+			token.Type = IDENTIFIER_TOKEN_TYPE
+		}
+	}
+	lexer.tokens = append(lexer.tokens, token)
 	lexer.currentIndex = endIndex
 }
 
@@ -54,8 +63,9 @@ func (lexer *Lexer) getFullStringToken() {
 	endIndex := lexer.getEndIndex(func(r rune) bool {
 		return r != DOUBLE_QUOTE_CHARACTER
 	})
-	identifier := lexer.text[lexer.currentIndex : endIndex+2]
-	lexer.tokens = append(lexer.tokens, identifier)
+	value := lexer.text[lexer.currentIndex : endIndex+2]
+	token := CreateToken(value, STRING_TOKEN_TYPE)
+	lexer.tokens = append(lexer.tokens, token)
 	lexer.currentIndex = endIndex + 2
 }
 
@@ -65,17 +75,20 @@ func (lexer *Lexer) Tokenize() {
 		isSkippable := char == NEW_LINE_CHARACTER || char == WHITESPACE_CHARACTER
 		if !isSkippable {
 			if char == EQUAL_SIGN {
-				lexer.tokens = append(lexer.tokens, EQUAL_TOKEN)
+				token := CreateToken(string(char), ASSIGNMENT_TOKEN_TYPE)
+				lexer.tokens = append(lexer.tokens, token)
 			} else if char == PLUS_SIGN {
-				lexer.tokens = append(lexer.tokens, PLUS_TOKEN)
+				token := CreateToken(string(char), OPERATOR_TOKEN_TYPE)
+				lexer.tokens = append(lexer.tokens, token)
 			} else if char == MINUS_SIGN {
-				lexer.tokens = append(lexer.tokens, MINUS_TOKEN)
+				token := CreateToken(string(char), OPERATOR_TOKEN_TYPE)
+				lexer.tokens = append(lexer.tokens, token)
 			} else if char == DOUBLE_QUOTE_CHARACTER {
 				lexer.getFullStringToken()
 			} else if isNumeric(char) {
-				lexer.getFullToken(isNumeric)
+				lexer.getFullToken()
 			} else if isAlphaNumeric(char) {
-				lexer.getFullToken(isAlphaNumeric)
+				lexer.getFullToken()
 			}
 		}
 		lexer.currentIndex++
