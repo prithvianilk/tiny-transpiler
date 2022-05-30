@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"testing"
 )
 
@@ -33,7 +32,7 @@ func TestLexerBig(t *testing.T) {
 		{Value: "READ", Type: KEYWORD_TOKEN_TYPE},
 		{Value: "D", Type: IDENTIFIER_TOKEN_TYPE},
 	}
-	execTest("test_lexer_big.txt", expectedTokens, t)
+	execLexerTest("test_lexer_big.txt", expectedTokens, t)
 }
 
 func TestLexerIO(t *testing.T) {
@@ -44,7 +43,7 @@ func TestLexerIO(t *testing.T) {
 		{Value: "PRINT", Type: KEYWORD_TOKEN_TYPE},
 		{Value: "VARIABLE", Type: IDENTIFIER_TOKEN_TYPE},
 	}
-	execTest("test_lexer_io.txt", expectedTokens, t)
+	execLexerTest("test_lexer_io.txt", expectedTokens, t)
 }
 
 func TestLexerOperators(t *testing.T) {
@@ -69,7 +68,7 @@ func TestLexerOperators(t *testing.T) {
 		{Value: "-", Type: OPERATOR_TOKEN_TYPE},
 		{Value: "A", Type: IDENTIFIER_TOKEN_TYPE},
 	}
-	execTest("test_lexer_operator.txt", expectedTokens, t)
+	execLexerTest("test_lexer_operator.txt", expectedTokens, t)
 }
 
 func TestLexerString(t *testing.T) {
@@ -80,15 +79,14 @@ func TestLexerString(t *testing.T) {
 		{Value: string(NEW_LINE_CHARACTER), Type: NEW_LINE_TOKEN_TYPE},
 		{Value: "\"san\"", Type: STRING_TOKEN_TYPE},
 	}
-	execTest("test_lexer_string.txt", expectedTokens, t)
+	execLexerTest("test_lexer_string.txt", expectedTokens, t)
 }
 
-func execTest(codeFilename string, expectedTokens []Token, t *testing.T) {
-	content, err := os.ReadFile(codeFilename)
+func execLexerTest(codeFilename string, expectedTokens []Token, t *testing.T) {
+	code, err := readCode(codeFilename)
 	if err != nil {
-		t.Fatal(err.Error())
+		panic(err)
 	}
-	code := string(content)
 	lexer := CreateLexer(code)
 	lexer.Tokenize()
 	tokens := lexer.tokens

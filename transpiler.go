@@ -14,13 +14,10 @@ func main() {
 	text := string(content)
 	lexer := CreateLexer(text)
 	lexer.Tokenize()
-	for index, token := range lexer.tokens {
-		fmt.Printf("token %d: %s\n", index+1, token)
-	}
-	fmt.Println()
 	parser := CreateParser(lexer.tokens)
 	err = parser.Parse()
 	if err != nil {
 		panic(err)
 	}
+	fmt.Println(parser.generator.buffer)
 }

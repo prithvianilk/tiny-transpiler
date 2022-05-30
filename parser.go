@@ -8,14 +8,14 @@ import (
 type Parser struct {
 	tokens       []Token
 	currentIndex int
+	generator    Generator
 }
 
 func CreateParser(tokens []Token) Parser {
-	return Parser{tokens: tokens, currentIndex: 0}
+	return Parser{tokens: tokens, currentIndex: 0, generator: Generator{buffer: ""}}
 }
 
 func (parser *Parser) Parse() error {
-	fmt.Println("S")
 	if parser.isLambda() {
 		return nil
 	}
@@ -28,7 +28,6 @@ func (parser *Parser) Parse() error {
 }
 
 func (parser *Parser) lines() bool {
-	fmt.Println("LINES")
 	if parser.isLambda() {
 		return true
 	}
@@ -41,20 +40,26 @@ func (parser *Parser) lines() bool {
 }
 
 func (parser *Parser) statement() bool {
-	fmt.Println("STMT")
 	token := parser.getCurrentToken()
 	isPrint := token.Value == PRINT_KEYWORD
 	isRead := token.Value == READ_KEYWORD
 	isKeyword := token.Type == KEYWORD_TOKEN_TYPE
 	if isKeyword {
 		if isPrint {
+			parser.generator.WriteString("print(")
 			parser.currentIndex++
-			return parser.value()
+			if parser.value() {
+				parser.generator.WriteString(")\n")
+				return true
+			}
+			return false
 		} else if isRead {
 			parser.currentIndex++
 			token = parser.getCurrentToken()
 			parser.currentIndex++
 			nextCharIsVariable := token.Type == IDENTIFIER_TOKEN_TYPE
+			code := fmt.Sprintf("%s=input()\n", token.Value)
+			parser.generator.WriteString(code)
 			return nextCharIsVariable
 		}
 	}
@@ -62,26 +67,30 @@ func (parser *Parser) statement() bool {
 }
 
 func (parser *Parser) assignment() bool {
-	fmt.Println("ASS")
 	token := parser.getCurrentToken()
 	isVariable := token.Type == IDENTIFIER_TOKEN_TYPE
 	if isVariable {
+		parser.generator.WriteString(token.Value)
 		parser.currentIndex++
 		token = parser.getCurrentToken()
 		if token.Type == ASSIGNMENT_TOKEN_TYPE {
+			parser.generator.WriteString("=")
 			parser.currentIndex++
-			return parser.value()
+			if parser.value() {
+				parser.generator.WriteString("\n")
+				return true
+			}
 		}
 	}
 	return false
 }
 
 func (parser *Parser) value() bool {
-	fmt.Println("VALUE")
 	token := parser.getCurrentToken()
 	isVariable := token.Type == IDENTIFIER_TOKEN_TYPE
 	isStringValue := token.Type == STRING_TOKEN_TYPE
 	if isVariable || isStringValue {
+		parser.generator.WriteString(token.Value)
 		parser.currentIndex++
 		return true
 	}
@@ -89,17 +98,19 @@ func (parser *Parser) value() bool {
 }
 
 func (parser *Parser) numericBinaryOperation() bool {
-	fmt.Println("NUMERIC BINARY OP")
 	token := parser.getCurrentToken()
 	isNumeric := token.Type == NUMBER_TOKEN_TYPE
 	if isNumeric {
+		parser.generator.WriteString(token.Value)
 		parser.currentIndex++
 		token = parser.getCurrentToken()
 		isOperation := token.Type == OPERATOR_TOKEN_TYPE
 		if isOperation {
+			parser.generator.WriteString(token.Value)
 			parser.currentIndex++
 			token = parser.getCurrentToken()
 			isNumeric = token.Type == NUMBER_TOKEN_TYPE
+			parser.generator.WriteString(token.Value)
 			parser.currentIndex++
 			return isNumeric
 		}
