@@ -9,9 +9,14 @@ const (
 	DOUBLE_QUOTE_CHARACTER rune = '"'
 )
 
+const (
+	PRINT_KEYWORD string = "PRINT"
+	READ_KEYWORD  string = "READ"
+)
+
 var keywords = map[string]bool{
-	"PRINT": true,
-	"READ":  true,
+	PRINT_KEYWORD: true,
+	READ_KEYWORD:  true,
 }
 
 type Lexer struct {

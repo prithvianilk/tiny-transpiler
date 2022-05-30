@@ -2,5 +2,14 @@ package main
 
 import "testing"
 
-func TestParser(t *testing.T) {
+func TestParserBig(t *testing.T) {
+
+}
+
+func TestParserNewLines(t *testing.T) {
+
+}
+
+func TestParserSingleRead(t *testing.T) {
+
 }

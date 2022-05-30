@@ -106,7 +106,3 @@ func execTest(codeFilename string, expectedTokens []Token, t *testing.T) {
 		}
 	}
 }
-
-func TestMain(m *testing.M) {
-	os.Exit(m.Run())
-}
