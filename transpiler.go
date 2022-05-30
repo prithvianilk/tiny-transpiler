@@ -1,12 +1,21 @@
 package main
 
 import (
-	"fmt"
 	"os"
 )
 
+func readCode(filename string) (string, error) {
+	content, err := os.ReadFile(filename)
+	if err != nil {
+		return "", err
+	}
+	code := string(content)
+	return code, nil
+}
+
 func main() {
 	filename := os.Args[1]
+	codeFilename := os.Args[2]
 	content, err := os.ReadFile(filename)
 	if err != nil {
 		panic(err)
@@ -19,5 +28,12 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(parser.generator.buffer)
+	file, err := os.Create(codeFilename)
+	if err != nil {
+		panic(err)
+	}
+	file.WriteString(parser.generator.buffer)
+	if file.Close() != nil {
+		panic(err)
+	}
 }

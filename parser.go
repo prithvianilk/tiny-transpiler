@@ -8,11 +8,11 @@ import (
 type Parser struct {
 	tokens       []Token
 	currentIndex int
-	generator    Generator
+	generator    CodeGenerator
 }
 
 func CreateParser(tokens []Token) Parser {
-	return Parser{tokens: tokens, currentIndex: 0, generator: Generator{buffer: ""}}
+	return Parser{tokens: tokens, currentIndex: 0, generator: CodeGenerator{buffer: ""}}
 }
 
 func (parser *Parser) Parse() error {

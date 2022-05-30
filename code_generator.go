@@ -1,9 +1,9 @@
 package main
 
-type Generator struct {
+type CodeGenerator struct {
 	buffer string
 }
 
-func (generator *Generator) WriteString(text string) {
+func (generator *CodeGenerator) WriteString(text string) {
 	generator.buffer += text
 }

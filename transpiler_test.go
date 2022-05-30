@@ -8,7 +8,7 @@ import (
 
 func TestTranspilerBig(t *testing.T) {
 	expectedPythonCode := "print(1)\nprint(2)\nA=input()\nprint(1+1)\nB=1+1\nC=2+3\nprint(4+2)\n"
-	err := execTest("test_transpiler_big.txt", expectedPythonCode)
+	err := execTest("test_files/test_transpiler_big.txt", expectedPythonCode)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -16,7 +16,7 @@ func TestTranspilerBig(t *testing.T) {
 
 func TestTranspilerNewLines(t *testing.T) {
 	expectedPythonCode := ""
-	err := execTest("test_transpiler_newlines.txt", expectedPythonCode)
+	err := execTest("test_files/test_transpiler_newlines.txt", expectedPythonCode)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -24,7 +24,7 @@ func TestTranspilerNewLines(t *testing.T) {
 
 func TestTranspilerIO(t *testing.T) {
 	expectedPythonCode := "A=input()\nprint(A)\n"
-	err := execTest("test_transpiler_io.txt", expectedPythonCode)
+	err := execTest("test_files/test_transpiler_io.txt", expectedPythonCode)
 	if err != nil {
 		t.Fatal(err)
 	}
